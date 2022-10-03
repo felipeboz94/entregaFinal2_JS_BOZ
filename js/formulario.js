@@ -82,13 +82,14 @@ function registraUsuario(usuarioIngresado,auxiliarArrayUsuarios){
         estado:usuarioIngresado.estado,
         intentos:usuarioIngresado.intentos
 }
-    const enJson = JSON.stringify(usuarioNuevo)
+    //const enJson = JSON.parse(usuarioNuevo)
     auxiliarArrayUsuarios.push(usuarioNuevo)
     let listaAuxiliar = auxiliarArrayUsuarios
     console.log("tipo"+typeof listaAuxiliar)
     console.log("enJson"+listaAuxiliar)
-    localStorage.setItem('usuariosRegistrados',listaAuxiliar)
-    //console.log(JSON.parse(localStorage.getItem('usuariosRegistrados')))
+    localStorage.setItem('usuariosRegistrados',JSON.stringify(listaAuxiliar))
+
+    return 1 
 }
 
 function submit(){
@@ -99,6 +100,7 @@ function submit(){
     let inputPass = document.getElementById('inputPass')
     let bloqueado = 0
     let intentos = 0
+    let reg = 0
     let usuarioIngresado = new Usuario(inputNombre.value,
         inputApellido.value,
         inputMail.value,
@@ -111,9 +113,12 @@ function submit(){
     let validado = validacion(usuarioIngresado,auxiliarArrayUsuarios)
     //console.log(validado)
     if (validado == 0){
-        registraUsuario(usuarioIngresado,auxiliarArrayUsuarios)
+        reg = registraUsuario(usuarioIngresado,auxiliarArrayUsuarios)
     }
     else{
         console.log("El usuario ingresado ya existe")
+    }
+    if (reg == 1){
+        aLogin()
     }
 }

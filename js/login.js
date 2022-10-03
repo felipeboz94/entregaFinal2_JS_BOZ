@@ -4,13 +4,13 @@
 
 //declaración de botones para eventos
 const PATH_USUARIOS_REGISTRADOS = "json/usuariosRegistrados.json"
+let inicia = 1
 let usuarioIngresado = ''
 let botEntrar = document.getElementById('botEntrar')
 botEntrar.addEventListener('click',tieneUsuario)
 let botCancelar = document.getElementById('botCancelar')
 botCancelar.addEventListener('click',limpiaCajas)
 //--------FUNCIONES SOBRE JSON---------------
-inicializa()
 
 function escribeJSON(){
 
@@ -22,14 +22,16 @@ function editaJSON(){
 
 //--------FUNCIONES INICIALIZACIÓN---------------
 function inicializa(){
-    cargaUsuariosRegistrados()
+    if (!JSON.parse(localStorage.getItem('usuariosRegistrados'))){
+        cargaUsuariosRegistrados()
+    }
 }
 // Cargo los usuarios desde JSON solo la primera vez que carga página.
 function cargaUsuariosRegistrados() {
     fetch(PATH_USUARIOS_REGISTRADOS)
     .then((respuesta) => respuesta.json())
     .then((respuesta) => {
-    localStorage.setItem('usuariosRegistrados',JSON.stringify(respuesta))
+        localStorage.setItem('usuariosRegistrados', JSON.stringify(respuesta))
     login2()
     })
 }
@@ -120,19 +122,21 @@ function determinaIndice(clave, valor, objeto){
 
 //buscador de usuarios
 function buscaUsuario(usuarioIngresado){
-    let user = []  
+    let user = []
     let auxiliarArrayUsuarios = JSON.parse(localStorage.getItem('usuariosRegistrados'))
-    console.log("auxuliar de array usuarios en login "+ auxiliarArrayUsuarios)
-    for(const row of auxiliarArrayUsuarios){
-        if(usuarioIngresado == row['usuario']){
-            user = row
-            console.log("Se encontró al usuario "+ user)
-            break
-        }
-    }
+    
+    auxiliarArrayUsuarios.forEach((usuarioRegistrado) => {
+        if(usuarioIngresado == usuarioRegistrado.usuario){
+            //user = JSON.stringify(usuarioRegistrado)
+            
+            user = usuarioRegistrado
+            console.log("Se encontró al usuario "+ user.usuario)
+        }      
+    })
+
     if (user.length==0){
             console.log("No se encontró al usuario "+ usuarioIngresado)
-            user = [null,null,null,null,null,null]
+            let user = [null,null,null,null,null,null]
         }
     
     return user
@@ -151,12 +155,11 @@ function login(){
     usuarioIngresado = inputUser.value
     passIngresada = inputPass.value
     let user = buscaUsuario(usuarioIngresado)
-    console.log("El usuario encontrado es "+user.usuario)
     if(usuarioIngresado == null || usuarioIngresado == ""){
         return 0
     }
     else if(user.estado == 1){
-        return 99
+        return 100
     }
     else{
         if (user.usuario != usuarioIngresado){
@@ -224,6 +227,11 @@ function tieneUsuario(){
                 break           
             case 99:
                 mensaje = 'ATENCIÓN. Contraseña incorrecta, intentelo nuevamente'
+                modificadorMsj(mensaje)
+                console.log(mensaje)
+                break
+            case 100:
+                mensaje = 'ATENCIÓN. El usuario está bloqueado'
                 modificadorMsj(mensaje)
                 console.log(mensaje)
                 break
