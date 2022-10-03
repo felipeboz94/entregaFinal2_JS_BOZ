@@ -10,6 +10,7 @@ let botEntrar = document.getElementById('botEntrar')
 botEntrar.addEventListener('click',tieneUsuario)
 let botCancelar = document.getElementById('botCancelar')
 botCancelar.addEventListener('click',limpiaCajas)
+inicializa()
 //--------FUNCIONES SOBRE JSON---------------
 
 function escribeJSON(){
